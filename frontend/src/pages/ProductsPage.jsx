@@ -136,7 +136,7 @@ const ProductsPage = () => {
         <div>
           <Header activeHeading={3} />
           {categoriesParam === "Cloths" && (
-            <div className="flex mb-4 sticky top-28 z-10">
+            <div className="flex mb-4 sticky top-28 z-10" style={{ zIndex: 1 }}>
               <div className="w-1/2">
                 <button
                   onClick={() => setFilterDrawerOpen(true)}
