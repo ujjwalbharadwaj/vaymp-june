@@ -219,7 +219,7 @@ export const navItems = [
       title: "Cloths",
       subTitle: "",
       image_Url:
-        "https://www.shift4shop.com/2015/images/industries/clothing/clothing-apparel.png",
+        "https://media.istockphoto.com/id/1314922309/vector/niche-service-marketplace-abstract-concept-vector-illustration.jpg?s=612x612&w=0&k=20&c=to29stwFIjj0fb4yWqgAUj2RHgBp0bkXYcFh-wSrRjA=",
     },
     {
       id: 5,
