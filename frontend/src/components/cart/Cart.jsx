@@ -247,6 +247,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTocart, removeFromCart,updateTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Cart = ({ setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);
@@ -417,7 +418,7 @@ const Cart = ({ setOpenCart }) => {
       onClick={handleCloseClick}
     >
       <div
-        className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm"
+        className="fixed top-0 right-0 h-full sm:w-[400px] lg:w-[450px] xl:w-[450px] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm"
         ref={cartRef}
       >
         {totalCount === 0 ? (
@@ -545,6 +546,13 @@ const CartSingle = ({ val2,data, quantityChangeHandler, removeFromCartHandler })
     setValue(value === 1 ? 1 : value - 1);
     quantityChangeHandler(data, value === 1 ? 1 : value - 1, "dec",selectedSize);
   };
+  const isProductNameShort = data.name.length < 20;
+  const navigate = useNavigate();
+  const handleProductClick = () => {
+    navigate(`/product/${data._id}`);
+    window.location.reload();
+    
+  };
 
   return (
     <div className="border-b p-4">
@@ -564,26 +572,42 @@ const CartSingle = ({ val2,data, quantityChangeHandler, removeFromCartHandler })
             <HiOutlineMinus size={16} color="#7d879c" />
           </div>
         </div>
-
         <img
           src={`${data?.images?.[0]?.url}`}
           alt=""
-          className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
+          className="w-[130px] h-min ml-2 mr-2 rounded-[5px] cursor-pointer"
+          onClick={handleProductClick}
         />
-        <div>{selectedSize}</div>
-        <div className="pl-[5px]">
-          <h1>{data.name}</h1>
+        <div
+          className="flex-grow pl-[5px] cursor-pointer"
+          onClick={handleProductClick}
+        >
+          <h1 style={{ marginBottom: "10px" }}>{data.name}</h1>
+          <div>Size: {selectedSize}</div>
           <h4 className="font-[400] text-[15px] text-[#00000082]">
-            Rs.{data.discountPrice} * {value}
+            {/* Displaying the discount amount */}
+            {data.originalPrice && (
+              <span>
+                <del>₹{data.originalPrice}</del>{" "}
+                {/* Original price with strikethrough */}
+                <br className="sm:hidden" />
+                <span className="sm:ml-2 sm:mt-0">
+                &nbsp; (Save ₹
+                {(data.originalPrice - data.discountPrice) * value})
+                </span>
+              </span>
+            )}
           </h4>
           <h4 className="font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto">
-            Rs.{totalPrice}
+            ₹{totalPrice}
           </h4>
         </div>
-        <RxCross1
-          className="cursor-pointer"
-          onClick={() => removeFromCartHandler(data,selectedSize)}
-        />
+        <div className={`${isProductNameShort ? "ml-4" : "ml-auto"}`}>
+          <RxCross1
+            className="cursor-pointer"
+            onClick={() => removeFromCartHandler(data, selectedSize)}
+          />
+        </div>
       </div>
     </div>
   );
