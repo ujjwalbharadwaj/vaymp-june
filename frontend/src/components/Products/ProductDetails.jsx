@@ -5,6 +5,7 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
   AiOutlineInfoCircle,
+  AiFillStar,
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,6 +32,13 @@ const ProductDetails =  ({ data }) => {
   const [select, setSelect] = useState(0);
   const [selectedSize, setSelectedSize] = useState(""); // State for selected size
   const [showDescription, setShowDescription] = useState(false);
+  const handleMouseEnter = () => {
+    setShowDescription(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowDescription(false);
+  };
 //const [adminuser,setadminuser]=useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -291,23 +299,54 @@ const ProductDetails =  ({ data }) => {
                 <div className="border rounded-lg p-6 bg-gray-50">
                   <div className="flex items-center">
                     <h1 className={`${styles.productTitle}`}>{data.name}</h1>
+                  </div>
+                  <div className="relative flex items-center mt-1">
+                    <h4
+                      className={`${styles.productDiscountPrice}{"text-lg font-bold"}`}
+                    >
+                      ₹ {data.discountPrice}
+                    </h4>
                     <AiOutlineInfoCircle
                       size={24}
                       className="text-gray-600 ml-2 cursor-pointer"
-                      onMouseEnter={() => setShowDescription(true)}
-                      onMouseLeave={() => setShowDescription(false)}
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
                     />
+                    {showDescription && (
+                      <div className="absolute top-8 left-2 bg-white border border-gray-300 rounded-md shadow-lg p-4 z-10"
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      >
+                        <div className="absolute top-0 left-14 transform -translate-x-1/2 -translate-y-full">
+                          <div className="w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-gray-200"></div>
+                          <div className="w-0 h-0 border-l-7 border-r-7 border-b-7 border-transparent border-b-white mt-[1px]"></div>
+                        </div>
+                        <h4 className="text-md font-bold">PRICE DETAILS</h4>
+                        <hr />
+                        <p className="text-sm mt-2">
+                          Maximum Retail Price (MRP): ₹{data.originalPrice}
+                        </p>
+                        <p className="text-sm mb-2">
+                          Final Discounted Price: ₹{data.discountPrice}
+                        </p>
+                        <hr />
+                        <p className="text-xs mt-2">
+                          MRP is inclusive of all taxes.
+                        </p>
+                        <p className="text-xs">
+                          This product has an MRP (Maximum Retail Price) set by the supplier. As per govt. guidelines.
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <p className={`${showDescription ? "block" : "hidden"} mt-2`}>
-                    {data.description}
-                  </p>
-                  <div className="flex pt-2">
-                    <h4 className={`${styles.productDiscountPrice}`}>
-                      ₹ {data.discountPrice}
-                    </h4>
-                    <h3 className={`${styles.price}`}>
-                      {data.originalPrice ? "₹" + data.originalPrice : null}
-                    </h3>
+                  <div className="relative flex items-center mt-3">
+                    <div className="inline-flex rounded-full bg-green-500 px-3 py-1 mb-2 text-sm"
+                    style={{alignItems:'center',justifyContent:'center', color:'white'}}
+                    >
+                    <b>{averageRating.slice(0, 3)}</b>
+                    <AiFillStar className="ml-1" />
+                    </div>
+                    <span className="flex text-base mb-2 ml-5">{averageRating.length} reviews</span>
                   </div>
                 </div>
                 {/* <div className="flex items-center mt-12 justify-between pr-3">
