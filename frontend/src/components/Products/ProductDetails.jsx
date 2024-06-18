@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import {
   AiFillHeart,
   AiOutlineHeart,
@@ -32,6 +32,8 @@ const ProductDetails =  ({ data }) => {
   const [select, setSelect] = useState(0);
   const [selectedSize, setSelectedSize] = useState(""); // State for selected size
   const [showDescription, setShowDescription] = useState(false);
+  const [a,seta]=useState(0);
+  const sectionRef=useRef(null)
   const handleMouseEnter = () => {
     setShowDescription(true);
   };
@@ -231,7 +233,7 @@ const ProductDetails =  ({ data }) => {
   const avg = totalRatings / totalReviewsLength || 0;
 
   const averageRating = avg.toFixed(2);
-
+  // const sectionRef=useRef(null);
   const handleMessageSubmit = async () => {
     if (isAuthenticated) {
       const groupTitle = data._id + user._id;
@@ -298,7 +300,7 @@ const ProductDetails =  ({ data }) => {
               <div className="w-full 800px:w-[50%] pt-10">
                 <div className="border rounded-lg p-6 bg-gray-50">
                   <div className="flex items-center">
-                    <h1 className={`${styles.productTitle}`}>{data.name}</h1>
+                    <h1 className={`${styles.productTitle} text-xl font-normal`}>{data.name}</h1>
                   </div>
                   <div className="relative flex items-center mt-1">
                     <h4
@@ -306,8 +308,16 @@ const ProductDetails =  ({ data }) => {
                     >
                       ₹ {data.discountPrice}
                     </h4>
+                    <div className="flex items-center ml-2">
+                      <h4 className="text-sm text-gray-500 line-through">
+                        ₹{data.originalPrice ? data.originalPrice : null}
+                      </h4>
+                      <span className="text-sm text-green-500 font-bold ml-2">
+                        ({Math.round(((data.originalPrice - data.discountPrice) / data.originalPrice) * 100)}% off)
+                      </span>
+                    </div>
                     <AiOutlineInfoCircle
-                      size={24}
+                      size={18}
                       className="text-gray-600 ml-2 cursor-pointer"
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
@@ -317,7 +327,7 @@ const ProductDetails =  ({ data }) => {
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
                       >
-                        <div className="absolute top-0 left-14 transform -translate-x-1/2 -translate-y-full">
+                        <div className="absolute top-0 left-[170px] transform -translate-x-1/2 -translate-y-full">
                           <div className="w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-gray-200"></div>
                           <div className="w-0 h-0 border-l-7 border-r-7 border-b-7 border-transparent border-b-white mt-[1px]"></div>
                         </div>
@@ -346,7 +356,16 @@ const ProductDetails =  ({ data }) => {
                     <b>{averageRating.slice(0, 3)}</b>
                     <AiFillStar className="ml-1" />
                     </div>
-                    <span className="flex text-base mb-2 ml-5">{averageRating.length} reviews</span>
+                    <span 
+                      className="flex text-xs mb-2 ml-5 cursor-pointer" 
+                      onClick={() => {sectionRef.current.scrollIntoView({behavior:'smooth'}) 
+                      seta(a+1)}}
+                    >
+                    {data.reviews.length} reviews
+                   </span>
+                  </div>
+                  <div className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm mt-2" style={{ fontFamily: 'Roboto, sans-serif', color:'gray' }}>
+                    Free Delivery
                   </div>
                 </div>
                 {/* <div className="flex items-center mt-12 justify-between pr-3">
@@ -375,9 +394,9 @@ const ProductDetails =  ({ data }) => {
                     <div className="mr-4">
                       <label
                         htmlFor="sizeSelect"
-                        className="font-medium text-gray-800 text-lg"
+                        className="font-semibold text-gray-800 text-xl lg:text-2xl"
                       >
-                        Select Size:
+                        Select Size
                       </label>
                       <div className="flex flex-wrap mt-8">
                         {data.stock.map((item) => {
@@ -414,7 +433,8 @@ const ProductDetails =  ({ data }) => {
                 
                 {/* Button container */}
                 <div className="relative" style={{ zIndex: 1 }}>
-                <div className="sm:hidden fixed bottom-0 left-0 w-full bg-white shadow-lg p-2" style={{ zIndex: 0 }}>                  <div className="flex justify-between items-center">
+                <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg p-2 md:hidden" style={{ zIndex: 0 }}>                  
+                <div className="flex justify-between items-center">
                     {/* Add to Cart Button */}
                     <div
                       className={`${styles.button} !mt-6 !rounded !h-11 flex items-center mr-10`}
@@ -553,7 +573,7 @@ const ProductDetails =  ({ data }) => {
                         {adminuser?.name}
                       </h3> */}
                     
-                    <h5 className="pb-3 text-[15px]">
+                    <h5 className="pb-3 text-[15px]" ref={sectionRef}>
                       ({averageRating}/5) Ratings
                     </h5>
                   </div>
@@ -571,10 +591,12 @@ const ProductDetails =  ({ data }) => {
             </div>
           </div>
           <ProductDetailsInfo
+          a={a}
             data={data}
             products={products}
             totalReviewsLength={totalReviewsLength}
             averageRating={averageRating}
+            sectionRef={sectionRef}
           />
           <br />
           <br />
@@ -589,9 +611,14 @@ const ProductDetailsInfo = ({
   products,
   totalReviewsLength,
   averageRating,
+  a,
 }) => {
   const [active, setActive] = useState(1);
-
+  useEffect(()=>{
+    if(a!=0){
+      setActive(2)
+    }
+  },[a])
   return (
     <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded">
       <div className="w-full flex justify-between border-b pt-10 pb-2">
@@ -600,7 +627,7 @@ const ProductDetailsInfo = ({
             className={
               "text-[#000] text-[18px] px-1 leading-5 font-[600] cursor-pointer 800px:text-[20px]"
             }
-            onClick={() => setActive(1)}
+            onClick={() => setActive(1)} 
           >
             Product Details
           </h5>
